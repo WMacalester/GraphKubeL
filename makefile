@@ -7,6 +7,7 @@ PRODUCT_SERVICE_NAME = product-service
 INVENTORY_SERVICE_NAME = inventory-service
 ORDER_SERVICE_NAME = order-service
 
+BASE_IMAGE = base-graphkubel-image
 PRODUCT_IMAGE = $(PRODUCT_SERVICE_NAME):latest
 INVENTORY_IMAGE = $(INVENTORY_SERVICE_NAME):latest
 ORDER_IMAGE = $(ORDER_SERVICE_NAME):latest
@@ -29,18 +30,23 @@ generate-product:
 .PHONY: build
 build: build-product build-inventory build-order
 
+.PHONY: build-base-image
+build-base-image:
+	@echo "Building Inventory Service..."
+	docker build -t $(BASE_IMAGE) -f Dockerfile.base .
+
 .PHONY: build-inventory
-build-inventory:
+build-inventory: build-base-image
 	@echo "Building Inventory Service..."
 	cd $(INVENTORY_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(INVENTORY_IMAGE) -f Dockerfile.inventory .
 
 .PHONY: build-order
-build-order:
+build-order: build-base-image
 	@echo "Building Order Service..."
 	cd $(ORDER_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(ORDER_IMAGE) -f Dockerfile.order .
 
 .PHONY: build-product
-build-product: generate-product
+build-product: generate-product build-base-image
 	@echo "Building Product Service..."
 	cd $(PRODUCT_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(PRODUCT_IMAGE) -f Dockerfile.product .
 
