@@ -1,4 +1,4 @@
-FROM golang:1.23.2 AS base-builder
+FROM golang:1.23.2 AS base-graphkubel-image 
 
 WORKDIR /app
 COPY go.mod go.sum ./

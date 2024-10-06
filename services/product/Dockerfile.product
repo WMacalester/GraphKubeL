@@ -1,6 +1,6 @@
 ARG ARG ALPINE_VERSION 
 
-FROM base-builder AS builder
+FROM base-graphkubel-image AS builder
 
 COPY . ./services/product
 
