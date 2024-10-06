@@ -1,0 +1,14 @@
+FROM base-builder AS builder
+
+COPY . ./services/order
+
+WORKDIR /app/services/order
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /order-service
+
+FROM alpine:3.14
+WORKDIR /root/
+
+COPY --from=builder /order-service .
+EXPOSE 8080
+CMD ["./order-service"]
