@@ -1,0 +1,19 @@
+type Query {
+  product: [Product]
+}
+
+type Mutation {
+  createProduct(input: ProductCreateDto): Product
+}
+
+type Product {
+  name: String
+  category: String
+  description: String
+}
+
+input ProductCreateDto {
+  name: String!
+  category: String!
+  description: String!
+}
