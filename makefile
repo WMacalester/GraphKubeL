@@ -11,6 +11,8 @@ PRODUCT_IMAGE = $(PRODUCT_SERVICE_NAME):latest
 INVENTORY_IMAGE = $(INVENTORY_SERVICE_NAME):latest
 ORDER_IMAGE = $(ORDER_SERVICE_NAME):latest
 
+ALPINE_VERSION = 3.14
+
 WORKDIR = /app
 
 .PHONY: all
@@ -23,17 +25,17 @@ build: build-product build-inventory build-order
 .PHONY: build-inventory
 build-inventory:
 	@echo "Building Inventory Service..."
-	cd $(INVENTORY_SERVICE_DIR) && docker build -t $(INVENTORY_IMAGE) -f Dockerfile.inventory .
+	cd $(INVENTORY_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(INVENTORY_IMAGE) -f Dockerfile.inventory .
 
 .PHONY: build-order
 build-order:
 	@echo "Building Order Service..."
-	cd $(ORDER_SERVICE_DIR) && docker build -t $(ORDER_IMAGE) -f Dockerfile.order .
+	cd $(ORDER_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(ORDER_IMAGE) -f Dockerfile.order .
 
 .PHONY: build-product
 build-product:
 	@echo "Building Product Service..."
-	cd $(PRODUCT_SERVICE_DIR) && docker build -t $(PRODUCT_IMAGE) -f Dockerfile.product .
+	cd $(PRODUCT_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(PRODUCT_IMAGE) -f Dockerfile.product .
 
 # Run
 .PHONY: run

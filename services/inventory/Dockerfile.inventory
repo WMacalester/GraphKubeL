@@ -1,3 +1,5 @@
+ARG ARG ALPINE_VERSION 
+
 FROM base-builder AS builder
 
 COPY . ./services/inventory
@@ -6,7 +8,7 @@ WORKDIR /app/services/inventory
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /inventory-service
 
-FROM alpine:3.14
+FROM alpine:${ALPINE_VERSION}
 WORKDIR /root/
 
 COPY --from=builder /inventory-service .
