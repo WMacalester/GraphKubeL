@@ -1,0 +1,5 @@
+FROM golang:1.23.2 AS base-builder
+
+WORKDIR /app
+COPY go.mod ./
+RUN go mod download
