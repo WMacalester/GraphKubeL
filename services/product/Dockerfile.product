@@ -1,4 +1,4 @@
-ARG ARG ALPINE_VERSION 
+ARG ALPINE_VERSION
 
 FROM base-graphkubel-image AS builder
 
@@ -6,7 +6,7 @@ COPY . ./services/product
 
 WORKDIR /app/services/product
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /product-service
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /product-service .
 
 FROM alpine:${ALPINE_VERSION}
 WORKDIR /root/
