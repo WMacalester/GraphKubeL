@@ -2,6 +2,7 @@ SERVICES_DIR = ./services
 INVENTORY_SERVICE_DIR = $(SERVICES_DIR)/inventory
 ORDER_SERVICE_DIR = $(SERVICES_DIR)/order
 PRODUCT_SERVICE_DIR = $(SERVICES_DIR)/product
+TOOLS_DIR = ./internal/tools
 
 PRODUCT_SERVICE_NAME = product-service
 INVENTORY_SERVICE_NAME = inventory-service
@@ -74,6 +75,11 @@ run-product:
 clean:
 	@echo "Cleaning up images..."
 	docker rmi $(PRODUCT_IMAGE) $(INVENTORY_IMAGE) $(ORDER_IMAGE) || true
+
+.PHONY: install-tools
+install-tools:
+	@echo "Installing tools..."
+	chmod +x $(TOOLS_DIR)/install-tools.sh && $(TOOLS_DIR)/install-tools.sh
 
 # Default target
 .PHONY: default
