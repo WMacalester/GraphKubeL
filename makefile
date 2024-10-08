@@ -20,13 +20,6 @@ WORKDIR = /app
 .PHONY: all
 all: build
 
-# Graphql Generation
-generate:
-	cd "$(DIRECTORY)" && go run github.com/99designs/gqlgen generate
-
-generate-product: 
-	$(MAKE) generate DIRECTORY=$(PRODUCT_SERVICE_DIR)
-
 # Build
 .PHONY: build
 build: build-product build-inventory build-order
@@ -47,9 +40,9 @@ build-order: build-base-image
 	cd $(ORDER_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(ORDER_IMAGE) -f Dockerfile.order .
 
 .PHONY: build-product
-build-product: generate-product build-base-image
+build-product: build-base-image
 	@echo "Building Product Service..."
-	cd $(PRODUCT_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(PRODUCT_IMAGE) -f Dockerfile.product .
+	cd $(PRODUCT_SERVICE_DIR) && go generate && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(PRODUCT_IMAGE) -f Dockerfile.product .
 
 # Run
 .PHONY: run
