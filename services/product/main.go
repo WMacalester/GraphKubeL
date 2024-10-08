@@ -1,3 +1,7 @@
+//go:generate echo -e "\033[1;34mGenerating sqlc...\033[0m"
+//go:generate sqlc generate
+//go:generate echo -e "\033[1;32mGenerating graphql...\033[0m"
+//go:generate gqlgen generate
 package main
 
 import (
