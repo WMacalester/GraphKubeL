@@ -3,7 +3,19 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"github.com/WMacalester/GraphKubeL/services/product/database"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
+
+type ProductRepository struct {
+	Queries *database.Queries
+}
+
+func NewProductRepository(pool *pgxpool.Pool) *ProductRepository {
+	queries := database.New(pool)
+	return &ProductRepository{Queries: queries}
+}
 
 func CreateConnString() (string, error){
 	user := os.Getenv("PRODUCT_PG_USER")
