@@ -56,5 +56,5 @@ func (r *ProductRepository) GetProducts(ctx context.Context) ([]Product, error) 
 }
 
 func mapProductDaoToProduct(dao database.Product) Product {
-	return Product{Name: dao.Name, Category: ProductCategory(dao.Category.Int32) ,Description: dao.Description.String}
+	return Product{Id: int(dao.ID), Name: dao.Name, Category: ProductCategory{} ,Description: dao.Description.String}
 }

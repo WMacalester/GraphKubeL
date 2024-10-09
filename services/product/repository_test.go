@@ -27,8 +27,8 @@ func TestGetProducts(t *testing.T){
 
     t.Run("Gets products", func(t *testing.T) {
 		mockQueries.On("GetProducts", mock.Anything).Return([]database.Product{
-			{Name: "Product1", Category: pgtype.Int4{Int32: 0, Valid: true}, Description: pgtype.Text{String: "Description1", Valid: true}},
-			{Name: "Product2", Category: pgtype.Int4{Int32: 1, Valid: true}, Description: pgtype.Text{String: "Description2", Valid: true}},
+			{ID: 0, Name: "Product1", Description: pgtype.Text{String: "Description1", Valid: true}},
+			{ID: 1, Name: "Product2", Description: pgtype.Text{String: "Description2", Valid: true}},
 		}, nil).Once()
 
 		products, err := repo.GetProducts(context.Background())
@@ -36,8 +36,8 @@ func TestGetProducts(t *testing.T){
 		assert.NoError(t, err)
 		assert.Len(t, products, 2)
 
-        product1 := Product{Name: "Product1", Category: ProductCategory(0), Description: "Description1"}
-        product2 := Product{Name: "Product2", Category: ProductCategory(1), Description: "Description2"}
+        product1 := Product{Id: 0, Name: "Product1", Description: "Description1"}
+        product2 := Product{Id: 1, Name: "Product2", Description: "Description2"}
 
         assert.Equal(t, []Product{product1, product2}, products)
 		mockQueries.AssertExpectations(t)

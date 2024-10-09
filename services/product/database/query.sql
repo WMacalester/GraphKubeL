@@ -1,4 +1,4 @@
 -- name: GetProducts :many
 SELECT *
-FROM product
+FROM products
 ORDER BY name;
