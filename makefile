@@ -74,6 +74,11 @@ install-tools:
 	@echo "Installing tools..."
 	chmod +x $(TOOLS_DIR)/install-tools.sh && $(TOOLS_DIR)/install-tools.sh
 
+.PHONY: migrate-db
+migrate-db:
+	@echo "Migrating product database..."
+	./migrateDb.sh
+
 # Default target
 .PHONY: default
 default: all
