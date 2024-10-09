@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -8,8 +9,12 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type ProductQueries interface {
+	GetProducts(ctx context.Context) ([]database.Product, error)
+}
+
 type ProductRepository struct {
-	Queries *database.Queries
+	Queries ProductQueries
 }
 
 func NewProductRepository(pool *pgxpool.Pool) *ProductRepository {
@@ -33,4 +38,23 @@ func CreateConnString() (string, error){
 		user, password, host, port, dbname, sslmode)
 
 	return connString, nil
+}
+
+func (r *ProductRepository) GetProducts(ctx context.Context) ([]Product, error) {
+	productDaos, err := r.Queries.GetProducts(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	products := make([]Product, len(productDaos))
+	for i, v := range productDaos {
+		products[i] = mapProductDaoToProduct(v)
+	}
+
+	return products, nil
+}
+
+func mapProductDaoToProduct(dao database.Product) Product {
+	return Product{Name: dao.Name, Category: ProductCategory(dao.Category.Int32) ,Description: dao.Description.String}
 }
