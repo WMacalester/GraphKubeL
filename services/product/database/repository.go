@@ -1,20 +1,19 @@
-package main
+package database
 
 import (
 	"context"
 	"fmt"
 	"os"
 
-	"github.com/WMacalester/GraphKubeL/services/product/database"
 	"github.com/WMacalester/GraphKubeL/services/product/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type ProductQueries interface {
-	GetProducts(ctx context.Context) ([]database.Product, error)
-	GetProductCategoryById(ctx context.Context, id int32) (database.ProductCategory, error)
-	GetProductCategories(ctx context.Context) ([]database.ProductCategory, error)
-	InsertProductCategory(ctx context.Context, name string) (database.ProductCategory, error)
+	GetProducts(ctx context.Context) ([]Product, error)
+	GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error)
+	GetProductCategories(ctx context.Context) ([]ProductCategory, error)
+	InsertProductCategory(ctx context.Context, name string) (ProductCategory, error)
 }
 
 type ProductRepository struct {
@@ -22,7 +21,7 @@ type ProductRepository struct {
 }
 
 func NewProductRepository(pool *pgxpool.Pool) *ProductRepository {
-	queries := database.New(pool)
+	queries := New(pool)
 	return &ProductRepository{Queries: queries}
 }
 
@@ -89,10 +88,10 @@ func (r *ProductRepository) GetProductCategories(ctx context.Context) ([]models.
 	return products, nil
 }
 
-func mapProductDaoToProduct(dao database.Product) models.Product {
+func mapProductDaoToProduct(dao Product) models.Product {
 	return models.Product{Id: int(dao.ID), Name: dao.Name, Category: models.ProductCategory{} ,Description: dao.Description.String}
 }
 
-func mapProductCategoryDaoToProductCategory(dao database.ProductCategory) models.ProductCategory {
+func mapProductCategoryDaoToProductCategory(dao ProductCategory) models.ProductCategory {
 	return models.ProductCategory{Id: int(dao.ID), Name: dao.Name}
 }

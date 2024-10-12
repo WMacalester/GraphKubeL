@@ -1,11 +1,10 @@
-package main
+package database
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	"github.com/WMacalester/GraphKubeL/services/product/database"
 	"github.com/WMacalester/GraphKubeL/services/product/models"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
@@ -22,20 +21,20 @@ func handleMockCall[T any](args mock.Arguments) (T, error){
 	return args.Get(0).(T), nil
 }
 
-func (m *MockQueries) GetProducts(ctx context.Context) ([]database.Product, error) {
-	return handleMockCall[[]database.Product](m.Called(ctx))
+func (m *MockQueries) GetProducts(ctx context.Context) ([]Product, error) {
+	return handleMockCall[[]Product](m.Called(ctx))
 }   
 
-func (m *MockQueries) GetProductCategoryById(ctx context.Context, id int32) (database.ProductCategory, error) {
-    return handleMockCall[database.ProductCategory](m.Called(ctx))
+func (m *MockQueries) GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error) {
+    return handleMockCall[ProductCategory](m.Called(ctx))
 }   
 
-func (m *MockQueries) GetProductCategories(ctx context.Context) ([]database.ProductCategory, error) {
-    return handleMockCall[[]database.ProductCategory](m.Called(ctx))
+func (m *MockQueries) GetProductCategories(ctx context.Context) ([]ProductCategory, error) {
+    return handleMockCall[[]ProductCategory](m.Called(ctx))
 }   
 
-func (m *MockQueries) InsertProductCategory(ctx context.Context, name string) (database.ProductCategory, error) {
-    return handleMockCall[database.ProductCategory](m.Called(ctx))
+func (m *MockQueries) InsertProductCategory(ctx context.Context, name string) (ProductCategory, error) {
+    return handleMockCall[ProductCategory](m.Called(ctx))
 }
 
 func TestGetProducts(t *testing.T){
@@ -43,7 +42,7 @@ func TestGetProducts(t *testing.T){
     repo := &ProductRepository{Queries: mockQueries}
 
     t.Run("Gets products", func(t *testing.T) {
-		mockQueries.On("GetProducts", mock.Anything).Return([]database.Product{
+		mockQueries.On("GetProducts", mock.Anything).Return([]Product{
 			{ID: 0, Name: "Product1", Description: pgtype.Text{String: "Description1", Valid: true}},
 			{ID: 1, Name: "Product2", Description: pgtype.Text{String: "Description2", Valid: true}},
 		}, nil).Once()
@@ -80,7 +79,7 @@ func TestGetProductCategoryById(t *testing.T){
 		expected := models.ProductCategory{Id: 1, Name: "Category 1"}
 
 		mockQueries.On("GetProductCategoryById", mock.Anything).Return(
-			database.ProductCategory{ID: 1, Name: "Category 1"},
+			ProductCategory{ID: 1, Name: "Category 1"},
 			nil,
 		).Once()
 
@@ -108,7 +107,7 @@ func TestGetProductCategories(t *testing.T){
     repo := &ProductRepository{Queries: mockQueries}
 
     t.Run("Gets product categories", func(t *testing.T) {
-		categoryDaos := []database.ProductCategory{
+		categoryDaos := []ProductCategory{
 			{ID: 0, Name: "Category 1"},
 			{ID: 1, Name: "Category 2"},
 		}
@@ -145,7 +144,7 @@ func TestInsertProductCategory(t *testing.T){
 
     t.Run("Inserted product category returns id", func(t *testing.T) {
 		name :=  "some-returned-name"
-        mockQueries.On("InsertProductCategory", mock.Anything).Return(database.ProductCategory{ID: 12, Name:name}, nil).Once()
+        mockQueries.On("InsertProductCategory", mock.Anything).Return(ProductCategory{ID: 12, Name:name}, nil).Once()
         expected := models.ProductCategory{Id: 12, Name: name}
 
         id, err := repo.InsertProductCategory(context.Background(), models.ProductCategory{Name: name})

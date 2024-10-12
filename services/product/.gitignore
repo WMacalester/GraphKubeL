@@ -1,1 +1,3 @@
-database/*.go
+database/db.go
+database/models.go
+database/query.sql.go
