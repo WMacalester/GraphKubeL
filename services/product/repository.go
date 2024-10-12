@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/WMacalester/GraphKubeL/services/product/database"
+	"github.com/WMacalester/GraphKubeL/services/product/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -43,13 +44,13 @@ func CreateConnString() (string, error){
 	return connString, nil
 }
 
-func (r *ProductRepository) GetProducts(ctx context.Context) ([]Product, error) {
+func (r *ProductRepository) GetProducts(ctx context.Context) ([]models.Product, error) {
 	productDaos, err := r.Queries.GetProducts(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	products := make([]Product, len(productDaos))
+	products := make([]models.Product, len(productDaos))
 	for i, v := range productDaos {
 		products[i] = mapProductDaoToProduct(v)
 	}
@@ -57,30 +58,30 @@ func (r *ProductRepository) GetProducts(ctx context.Context) ([]Product, error) 
 	return products, nil
 }
 
-func (r *ProductRepository) InsertProductCategory(ctx context.Context, pc ProductCategory) (ProductCategory, error){
+func (r *ProductRepository) InsertProductCategory(ctx context.Context, pc models.ProductCategory) (models.ProductCategory, error){
 	productCategoryDao, err := r.Queries.InsertProductCategory(ctx, pc.Name)
 	if err != nil {
-		return ProductCategory{}, err
+		return models.ProductCategory{}, err
 	}
 	
-	return ProductCategory{Id: int(productCategoryDao.ID), Name: productCategoryDao.Name}, nil
+	return models.ProductCategory{Id: int(productCategoryDao.ID), Name: productCategoryDao.Name}, nil
 }
 
-func (r *ProductRepository) GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error) {
+func (r *ProductRepository) GetProductCategoryById(ctx context.Context, id int32) (models.ProductCategory, error) {
 	dao, err := r.Queries.GetProductCategoryById(ctx, id)
 	if err != nil {
-		return ProductCategory{}, err
+		return models.ProductCategory{}, err
 	}
 	return mapProductCategoryDaoToProductCategory(dao), nil
 }
 
-func (r *ProductRepository) GetProductCategories(ctx context.Context) ([]ProductCategory, error){
+func (r *ProductRepository) GetProductCategories(ctx context.Context) ([]models.ProductCategory, error){
 	daos, err := r.Queries.GetProductCategories(ctx);
 	if err != nil {
 		return nil, err
 	}
 	
-	products := make([]ProductCategory, len(daos))
+	products := make([]models.ProductCategory, len(daos))
 	for i, v := range daos {
 		products[i] = mapProductCategoryDaoToProductCategory(v)
 	}
@@ -88,10 +89,10 @@ func (r *ProductRepository) GetProductCategories(ctx context.Context) ([]Product
 	return products, nil
 }
 
-func mapProductDaoToProduct(dao database.Product) Product {
-	return Product{Id: int(dao.ID), Name: dao.Name, Category: ProductCategory{} ,Description: dao.Description.String}
+func mapProductDaoToProduct(dao database.Product) models.Product {
+	return models.Product{Id: int(dao.ID), Name: dao.Name, Category: models.ProductCategory{} ,Description: dao.Description.String}
 }
 
-func mapProductCategoryDaoToProductCategory(dao database.ProductCategory) ProductCategory {
-	return ProductCategory{Id: int(dao.ID), Name: dao.Name}
+func mapProductCategoryDaoToProductCategory(dao database.ProductCategory) models.ProductCategory {
+	return models.ProductCategory{Id: int(dao.ID), Name: dao.Name}
 }

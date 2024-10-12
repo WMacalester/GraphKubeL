@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/WMacalester/GraphKubeL/services/product/database"
+	"github.com/WMacalester/GraphKubeL/services/product/models"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -52,10 +53,10 @@ func TestGetProducts(t *testing.T){
 		assert.NoError(t, err)
 		assert.Len(t, products, 2)
 
-        product1 := Product{Id: 0, Name: "Product1", Description: "Description1"}
-        product2 := Product{Id: 1, Name: "Product2", Description: "Description2"}
+        product1 := models.Product{Id: 0, Name: "Product1", Description: "Description1"}
+        product2 := models.Product{Id: 1, Name: "Product2", Description: "Description2"}
 
-        assert.Equal(t, []Product{product1, product2}, products)
+        assert.Equal(t, []models.Product{product1, product2}, products)
 		mockQueries.AssertExpectations(t)
 	})
 
@@ -76,7 +77,7 @@ func TestGetProductCategoryById(t *testing.T){
     repo := &ProductRepository{Queries: mockQueries}
 
     t.Run("Gets product category", func(t *testing.T) {
-		expected := ProductCategory{Id: 1, Name: "Category 1"}
+		expected := models.ProductCategory{Id: 1, Name: "Category 1"}
 
 		mockQueries.On("GetProductCategoryById", mock.Anything).Return(
 			database.ProductCategory{ID: 1, Name: "Category 1"},
@@ -96,7 +97,7 @@ func TestGetProductCategoryById(t *testing.T){
 		result, err := repo.GetProductCategoryById(context.Background(), -1)
 
 		assert.Error(t, err)
-		assert.Equal(t, ProductCategory{}, result)
+		assert.Equal(t, models.ProductCategory{}, result)
 
 		mockQueries.AssertExpectations(t)
 	})
@@ -119,10 +120,10 @@ func TestGetProductCategories(t *testing.T){
 		assert.NoError(t, err)
 		assert.Len(t, products, 2)
 
-        category1 := ProductCategory{Id: 0, Name: "Category 1"}
-        category2 := ProductCategory{Id: 1, Name: "Category 2"}
+        category1 := models.ProductCategory{Id: 0, Name: "Category 1"}
+        category2 := models.ProductCategory{Id: 1, Name: "Category 2"}
 
-        assert.Equal(t, []ProductCategory{category1,category2}, products)
+        assert.Equal(t, []models.ProductCategory{category1,category2}, products)
 		mockQueries.AssertExpectations(t)
 	})
 
@@ -145,9 +146,9 @@ func TestInsertProductCategory(t *testing.T){
     t.Run("Inserted product category returns id", func(t *testing.T) {
 		name :=  "some-returned-name"
         mockQueries.On("InsertProductCategory", mock.Anything).Return(database.ProductCategory{ID: 12, Name:name}, nil).Once()
-        expected := ProductCategory{Id: 12, Name: name}
+        expected := models.ProductCategory{Id: 12, Name: name}
 
-        id, err := repo.InsertProductCategory(context.Background(), ProductCategory{Name: name})
+        id, err := repo.InsertProductCategory(context.Background(), models.ProductCategory{Name: name})
 
         assert.NoError(t, err)
         assert.Equal(t, expected, id)
