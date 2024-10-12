@@ -15,22 +15,22 @@ type MockQueries struct {
     mock.Mock
 }
 
+func handleMockCall[T any](args mock.Arguments) (T, error){
+    var zero T
+	if args.Error(1) != nil {return zero, args.Error(1)}
+	return args.Get(0).(T), nil
+}
+
 func (m *MockQueries) GetProducts(ctx context.Context) ([]database.Product, error) {
-    args := m.Called(ctx)
-    if args.Error(1) != nil {return nil, args.Error(1)}
-	return args.Get(0).([]database.Product), nil
+	return handleMockCall[[]database.Product](m.Called(ctx))
 }   
 
 func (m *MockQueries) GetProductCategories(ctx context.Context) ([]database.ProductCategory, error) {
-    args := m.Called(ctx)
-    if args.Error(1) != nil {return nil, args.Error(1)}
-	return args.Get(0).([]database.ProductCategory), nil
+    return handleMockCall[[]database.ProductCategory](m.Called(ctx))
 }   
 
 func (m *MockQueries) InsertProductCategory(ctx context.Context, name string) (database.ProductCategory, error) {
-    args := m.Called(ctx)
-    if args.Error(1) != nil {return database.ProductCategory{}, args.Error(1)}
-	return args.Get(0).(database.ProductCategory), nil
+    return handleMockCall[database.ProductCategory](m.Called(ctx))
 }
 
 func TestGetProducts(t *testing.T){
