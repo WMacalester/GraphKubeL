@@ -11,8 +11,9 @@ import (
 
 type ProductQueries interface {
 	GetProducts(ctx context.Context) ([]database.Product, error)
-	InsertProductCategory(ctx context.Context, name string) (database.ProductCategory, error)
+	GetProductCategoryById(ctx context.Context, id int32) (database.ProductCategory, error)
 	GetProductCategories(ctx context.Context) ([]database.ProductCategory, error)
+	InsertProductCategory(ctx context.Context, name string) (database.ProductCategory, error)
 }
 
 type ProductRepository struct {
@@ -63,6 +64,14 @@ func (r *ProductRepository) InsertProductCategory(ctx context.Context, pc Produc
 	}
 	
 	return ProductCategory{Id: int(productCategoryDao.ID), Name: productCategoryDao.Name}, nil
+}
+
+func (r *ProductRepository) GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error) {
+	dao, err := r.Queries.GetProductCategoryById(ctx, id)
+	if err != nil {
+		return ProductCategory{}, err
+	}
+	return mapProductCategoryDaoToProductCategory(dao), nil
 }
 
 func (r *ProductRepository) GetProductCategories(ctx context.Context) ([]ProductCategory, error){

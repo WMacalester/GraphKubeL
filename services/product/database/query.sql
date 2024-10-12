@@ -3,6 +3,11 @@ SELECT *
 FROM products
 ORDER BY name;
 
+-- name: GetProductCategoryById :one
+SELECT *
+FROM product_categories
+WHERE id = $1;
+
 -- name: GetProductCategories :many
 SELECT *
 FROM product_categories

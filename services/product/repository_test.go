@@ -25,6 +25,10 @@ func (m *MockQueries) GetProducts(ctx context.Context) ([]database.Product, erro
 	return handleMockCall[[]database.Product](m.Called(ctx))
 }   
 
+func (m *MockQueries) GetProductCategoryById(ctx context.Context, id int32) (database.ProductCategory, error) {
+    return handleMockCall[database.ProductCategory](m.Called(ctx))
+}   
+
 func (m *MockQueries) GetProductCategories(ctx context.Context) ([]database.ProductCategory, error) {
     return handleMockCall[[]database.ProductCategory](m.Called(ctx))
 }   
@@ -62,6 +66,37 @@ func TestGetProducts(t *testing.T){
 
 		assert.Error(t, err)
 		assert.Nil(t, products)
+
+		mockQueries.AssertExpectations(t)
+	})
+}
+
+func TestGetProductCategoryById(t *testing.T){
+    mockQueries := new(MockQueries)
+    repo := &ProductRepository{Queries: mockQueries}
+
+    t.Run("Gets product category", func(t *testing.T) {
+		expected := ProductCategory{Id: 1, Name: "Category 1"}
+
+		mockQueries.On("GetProductCategoryById", mock.Anything).Return(
+			database.ProductCategory{ID: 1, Name: "Category 1"},
+			nil,
+		).Once()
+
+		result, err := repo.GetProductCategoryById(context.Background(), 1)
+
+		assert.NoError(t, err)
+        assert.Equal(t, expected, result)
+		mockQueries.AssertExpectations(t)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		mockQueries.On("GetProductCategoryById", mock.Anything).Return(nil, assert.AnError).Once()
+
+		result, err := repo.GetProductCategoryById(context.Background(), -1)
+
+		assert.Error(t, err)
+		assert.Equal(t, ProductCategory{}, result)
 
 		mockQueries.AssertExpectations(t)
 	})
