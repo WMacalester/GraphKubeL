@@ -2,3 +2,9 @@
 SELECT *
 FROM products
 ORDER BY name;
+
+-- name: InsertProductCategory :one
+INSERT INTO product_categories (name)
+VALUES ($1)
+ON CONFLICT (name) DO NOTHING
+RETURNING id, name;

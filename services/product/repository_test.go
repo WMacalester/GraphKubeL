@@ -19,6 +19,12 @@ func (m *MockQueries) GetProducts(ctx context.Context) ([]database.Product, erro
     args := m.Called(ctx)
     if args.Error(1) != nil {return nil, args.Error(1)}
 	return args.Get(0).([]database.Product), nil
+}   
+
+func (m *MockQueries) InsertProductCategory(ctx context.Context, name string) (database.ProductCategory, error) {
+    args := m.Called(ctx)
+    if args.Error(1) != nil {return database.ProductCategory{}, args.Error(1)}
+	return args.Get(0).(database.ProductCategory), nil
 }
 
 func TestGetProducts(t *testing.T){
@@ -55,6 +61,22 @@ func TestGetProducts(t *testing.T){
 	})
 }
 
+func TestInsertProductCategory(t *testing.T){
+    mockQueries := new(MockQueries)
+    repo := &ProductRepository{Queries: mockQueries}
+
+    t.Run("Inserted product category returns id", func(t *testing.T) {
+		name :=  "some-returned-name"
+        mockQueries.On("InsertProductCategory", mock.Anything).Return(database.ProductCategory{ID: 12, Name:name}, nil).Once()
+        expected := ProductCategory{Id: 12, Name: name}
+
+        id, err := repo.InsertProductCategory(context.Background(), ProductCategory{Name: name})
+
+        assert.NoError(t, err)
+        assert.Equal(t, expected, id)
+    })
+
+}
 
 func TestCreateConnString(t *testing.T){
 	setEnv := func() {
