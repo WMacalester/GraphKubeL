@@ -17,9 +17,25 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input *model.Produ
 	return product, nil
 }
 
-// Product is the resolver for the product field.
-func (r *queryResolver) Product(ctx context.Context) ([]*model.Product, error) {
+// Products is the resolver for the products field.
+func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {
 	return r.products, nil
+}
+
+// ProductCategories is the resolver for the ProductCategories field.
+func (r *queryResolver) ProductCategories(ctx context.Context) ([]*model.ProductCategory, error) {
+	pcs, err := r.Repository.GetProductCategories(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	pcsPtr := make([]*model.ProductCategory, len(pcs))
+	for i, val := range pcs {
+		dto := model.ProductCategory{ID: val.Id, Name: val.Name}
+		pcsPtr[i] = &dto
+	}
+
+	return pcsPtr, nil
 }
 
 // Mutation returns MutationResolver implementation.

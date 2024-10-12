@@ -12,6 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/WMacalester/GraphKubeL/services/product/database"
 	"github.com/WMacalester/GraphKubeL/services/product/graph"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -19,11 +20,11 @@ import (
 const defaultPort = "8080"
 
 type AppConfig struct {
-	DB ProductRepository
+	DB database.ProductRepository
 }
 
 func main() {
-	connString, err := CreateConnString()
+	connString, err := database.CreateConnString()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,14 +35,14 @@ func main() {
 	}
 	defer connPool.Close()
 
-	// appConfig := AppConfig{DB: *NewProductRepository(connPool)}
+	appConfig := AppConfig{DB: *database.NewProductRepository(connPool)}
 	
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{Repository: &appConfig.DB}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
