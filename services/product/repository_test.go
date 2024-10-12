@@ -21,6 +21,12 @@ func (m *MockQueries) GetProducts(ctx context.Context) ([]database.Product, erro
 	return args.Get(0).([]database.Product), nil
 }   
 
+func (m *MockQueries) GetProductCategories(ctx context.Context) ([]database.ProductCategory, error) {
+    args := m.Called(ctx)
+    if args.Error(1) != nil {return nil, args.Error(1)}
+	return args.Get(0).([]database.ProductCategory), nil
+}   
+
 func (m *MockQueries) InsertProductCategory(ctx context.Context, name string) (database.ProductCategory, error) {
     args := m.Called(ctx)
     if args.Error(1) != nil {return database.ProductCategory{}, args.Error(1)}
@@ -46,6 +52,42 @@ func TestGetProducts(t *testing.T){
         product2 := Product{Id: 1, Name: "Product2", Description: "Description2"}
 
         assert.Equal(t, []Product{product1, product2}, products)
+		mockQueries.AssertExpectations(t)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		mockQueries.On("GetProducts", mock.Anything).Return(nil, assert.AnError).Once()
+
+		products, err := repo.GetProducts(context.Background())
+
+		assert.Error(t, err)
+		assert.Nil(t, products)
+
+		mockQueries.AssertExpectations(t)
+	})
+}
+
+func TestGetProductCategories(t *testing.T){
+    mockQueries := new(MockQueries)
+    repo := &ProductRepository{Queries: mockQueries}
+
+    t.Run("Gets product categories", func(t *testing.T) {
+		categoryDaos := []database.ProductCategory{
+			{ID: 0, Name: "Category 1"},
+			{ID: 1, Name: "Category 2"},
+		}
+
+		mockQueries.On("GetProductCategories", mock.Anything).Return(categoryDaos, nil).Once()
+
+		products, err := repo.GetProductCategories(context.Background())
+
+		assert.NoError(t, err)
+		assert.Len(t, products, 2)
+
+        category1 := ProductCategory{Id: 0, Name: "Category 1"}
+        category2 := ProductCategory{Id: 1, Name: "Category 2"}
+
+        assert.Equal(t, []ProductCategory{category1,category2}, products)
 		mockQueries.AssertExpectations(t)
 	})
 
