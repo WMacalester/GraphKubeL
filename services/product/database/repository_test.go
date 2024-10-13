@@ -21,6 +21,10 @@ func handleMockCall[T any](args mock.Arguments) (T, error){
 	return args.Get(0).(T), nil
 }
 
+func (m *MockQueries) GetProductById(ctx context.Context, id int32) (GetProductByIdRow, error) {
+	return handleMockCall[GetProductByIdRow](m.Called(ctx))
+}
+
 func (m *MockQueries) GetProducts(ctx context.Context) ([]GetProductsRow, error) {
 	return handleMockCall[[]GetProductsRow](m.Called(ctx))
 }   
@@ -83,6 +87,26 @@ func TestGetProducts(t *testing.T){
 		assert.Error(t, err)
 		assert.Nil(t, products)
 
+		mockQueries.AssertExpectations(t)
+	})
+}
+
+func TestGetProductById(t *testing.T){
+    mockQueries := new(MockQueries)
+    repo := &ProductRepository{Queries: mockQueries}
+
+    t.Run("Gets product", func(t *testing.T) {
+		expected := models.Product{Id: 1, Name: "product 1"}
+
+		mockQueries.On("GetProductById", mock.Anything).Return(
+			GetProductByIdRow{ID: 1, Name: "product 1"},
+			nil,
+		).Once()
+
+		result, err := repo.GetProductById(context.Background(), 1)
+
+		assert.NoError(t, err)
+        assert.Equal(t, expected, result)
 		mockQueries.AssertExpectations(t)
 	})
 }

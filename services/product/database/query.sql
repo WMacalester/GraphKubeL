@@ -1,3 +1,14 @@
+-- name: GetProductById :one
+SELECT
+    p.id AS id,
+    p.name AS name,
+    p.description AS description,
+    pc.id AS category_id,
+    pc.name AS category_name
+FROM products p
+JOIN product_categories pc ON p.category_id = pc.id
+WHERE p.id = $1;
+
 -- name: GetProducts :many
 SELECT
     p.id AS id,

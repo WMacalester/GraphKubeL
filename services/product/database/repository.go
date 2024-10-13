@@ -16,6 +16,7 @@ type ProductQueries interface {
 	GetProductCategories(ctx context.Context) ([]ProductCategory, error)
 	InsertProduct(ctx context.Context, productCreateDao InsertProductParams) (Product, error)
 	InsertProductCategory(ctx context.Context, name string) (ProductCategory, error)
+	GetProductById(ctx context.Context, id int32) (GetProductByIdRow, error)
 }
 
 type ProductRepository struct {
@@ -44,6 +45,16 @@ func CreateConnString() (string, error){
 
 	return connString, nil
 }
+
+func (r *ProductRepository) GetProductById(ctx context.Context, id int32) (models.Product, error){
+	dao, err := r.Queries.GetProductById(ctx, id)
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	return mapProductDaoToProduct(GetProductsRow(dao)), nil
+}
+
 
 func (r *ProductRepository) GetProducts(ctx context.Context) ([]models.Product, error) {
 	productDaos, err := r.Queries.GetProducts(ctx)
