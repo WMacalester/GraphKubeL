@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/WMacalester/GraphKubeL/services/product/graph/model"
+	"github.com/WMacalester/GraphKubeL/services/product/models"
 )
 
 // CreateProduct is the resolver for the createProduct field.
@@ -15,6 +16,17 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, input *model.Produ
 	product := &model.Product{Name: &input.Name, Category: &input.Category, Description: &input.Description}
 	r.products = append(r.products, product)
 	return product, nil
+}
+
+// CreateProductCategory is the resolver for the createProductCategory field.
+func (r *mutationResolver) CreateProductCategory(ctx context.Context, input *model.ProductCategoryCreateDto) (*model.ProductCategory, error) {
+	pc := models.ProductCategory{Name: input.Name}
+	saved, err := r.Repository.InsertProductCategory(ctx, pc)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapProductCategoryToProductCategoryDto(saved), nil
 }
 
 // Products is the resolver for the products field.

@@ -5,6 +5,7 @@ type Query {
 
 type Mutation {
   createProduct(input: ProductCreateDto): Product
+  createProductCategory(input: ProductCategoryCreateDto): ProductCategory
 }
 
 type Product {
@@ -24,6 +25,6 @@ type ProductCategory {
   name: String!
 }
 
-type ProductCategoryCreateDto {
-  name: String
+input ProductCategoryCreateDto {
+  name: String!
 }
