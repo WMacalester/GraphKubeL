@@ -18,3 +18,8 @@ INSERT INTO product_categories (name)
 VALUES ($1)
 ON CONFLICT (name) DO NOTHING
 RETURNING id, name;
+
+-- name: InsertProduct :one
+INSERT INTO products (name, category_id, description)
+VALUES ($1, $2, $3)
+RETURNING id, name, category_id, description;

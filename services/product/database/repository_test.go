@@ -33,6 +33,10 @@ func (m *MockQueries) GetProductCategories(ctx context.Context) ([]ProductCatego
     return handleMockCall[[]ProductCategory](m.Called(ctx))
 }   
 
+func (m *MockQueries) InsertProduct(ctx context.Context, productCreateDao InsertProductParams) (Product, error) {
+    return handleMockCall[Product](m.Called(ctx))
+}
+
 func (m *MockQueries) InsertProductCategory(ctx context.Context, name string) (ProductCategory, error) {
     return handleMockCall[ProductCategory](m.Called(ctx))
 }
@@ -138,6 +142,23 @@ func TestGetProductCategories(t *testing.T){
 	})
 }
 
+func TestInsertProduct(t *testing.T){
+    mockQueries := new(MockQueries)
+    repo := &ProductRepository{Queries: mockQueries}
+
+    t.Run("Inserted product returns product", func(t *testing.T) {
+		name :=  "some-product-name"
+		description :=  "some-description"
+        mockQueries.On("InsertProduct", mock.Anything).Return(Product{ID: 12, Name:name, Description: pgtype.Text{description, true}, CategoryID: pgtype.Int4{1, true}}, nil).Once()
+        expected := models.Product{Id: 12, Name: name, Description: description}
+
+        id, err := repo.InsertProduct(context.Background(), models.Product{Name: name, Description: description})
+
+        assert.NoError(t, err)
+        assert.Equal(t, expected, id)
+    })
+}
+
 func TestInsertProductCategory(t *testing.T){
     mockQueries := new(MockQueries)
     repo := &ProductRepository{Queries: mockQueries}
@@ -152,7 +173,6 @@ func TestInsertProductCategory(t *testing.T){
         assert.NoError(t, err)
         assert.Equal(t, expected, id)
     })
-
 }
 
 func TestCreateConnString(t *testing.T){

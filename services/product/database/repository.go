@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/WMacalester/GraphKubeL/services/product/models"
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -13,6 +14,7 @@ type ProductQueries interface {
 	GetProducts(ctx context.Context) ([]Product, error)
 	GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error)
 	GetProductCategories(ctx context.Context) ([]ProductCategory, error)
+	InsertProduct(ctx context.Context, productCreateDao InsertProductParams) (Product, error)
 	InsertProductCategory(ctx context.Context, name string) (ProductCategory, error)
 }
 
@@ -55,6 +57,21 @@ func (r *ProductRepository) GetProducts(ctx context.Context) ([]models.Product, 
 	}
 
 	return products, nil
+}
+
+func (r *ProductRepository) InsertProduct(ctx context.Context, product models.Product) (models.Product, error) {
+	dao := InsertProductParams{
+		Name: product.Name,
+		CategoryID: pgtype.Int4{Int32: int32(product.Category.Id), Valid: true}, 
+		Description: pgtype.Text{String: product.Description, Valid: true},
+	}  
+
+	val, err := r.Queries.InsertProduct(ctx, dao)
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	return models.Product{Id: int(val.ID), Name: val.Name, Description: val.Description.String}, nil
 }
 
 func (r *ProductRepository) InsertProductCategory(ctx context.Context, pc models.ProductCategory) (models.ProductCategory, error){
