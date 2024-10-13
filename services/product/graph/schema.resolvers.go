@@ -31,7 +31,18 @@ func (r *mutationResolver) CreateProductCategory(ctx context.Context, input *mod
 
 // Products is the resolver for the products field.
 func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {
-	return r.products, nil
+	products, err := r.Repository.GetProducts(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	dtos := make([]*model.Product, len(products))
+	for i, val := range products {
+		dto := mapProductToProductDto(val)
+		dtos[i] = dto
+	}
+
+	return dtos, nil
 }
 
 // ProductCategories is the resolver for the ProductCategories field.
