@@ -1,7 +1,13 @@
 -- name: GetProducts :many
-SELECT *
-FROM products
-ORDER BY name;
+SELECT
+    p.id AS id,
+    p.name AS name,
+    p.description AS description,
+    pc.id AS category_id,
+    pc.name AS category_name
+FROM products p
+JOIN product_categories pc ON p.category_id = pc.id
+ORDER BY p.name;
 
 -- name: GetProductCategoryById :one
 SELECT *

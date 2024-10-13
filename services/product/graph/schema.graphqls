@@ -10,13 +10,13 @@ type Mutation {
 
 type Product {
   name: String
-  category: String
+  category: ProductCategory
   description: String
 }
 
 input ProductCreateDto {
   name: String!
-  category: String!
+  categoryId: Int!
   description: String!
 }
 

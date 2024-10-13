@@ -11,7 +11,7 @@ import (
 )
 
 type ProductQueries interface {
-	GetProducts(ctx context.Context) ([]Product, error)
+	GetProducts(ctx context.Context) ([]GetProductsRow, error)
 	GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error)
 	GetProductCategories(ctx context.Context) ([]ProductCategory, error)
 	InsertProduct(ctx context.Context, productCreateDao InsertProductParams) (Product, error)
@@ -105,8 +105,8 @@ func (r *ProductRepository) GetProductCategories(ctx context.Context) ([]models.
 	return products, nil
 }
 
-func mapProductDaoToProduct(dao Product) models.Product {
-	return models.Product{Id: int(dao.ID), Name: dao.Name, Category: models.ProductCategory{} ,Description: dao.Description.String}
+func mapProductDaoToProduct(dao GetProductsRow) models.Product {
+	return models.Product{Id: int(dao.ID), Name: dao.Name, Category: models.ProductCategory{Id: int(dao.CategoryID), Name: dao.CategoryName} ,Description: dao.Description.String}
 }
 
 func mapProductCategoryDaoToProductCategory(dao ProductCategory) models.ProductCategory {

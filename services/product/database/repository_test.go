@@ -21,8 +21,8 @@ func handleMockCall[T any](args mock.Arguments) (T, error){
 	return args.Get(0).(T), nil
 }
 
-func (m *MockQueries) GetProducts(ctx context.Context) ([]Product, error) {
-	return handleMockCall[[]Product](m.Called(ctx))
+func (m *MockQueries) GetProducts(ctx context.Context) ([]GetProductsRow, error) {
+	return handleMockCall[[]GetProductsRow](m.Called(ctx))
 }   
 
 func (m *MockQueries) GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error) {
@@ -46,9 +46,21 @@ func TestGetProducts(t *testing.T){
     repo := &ProductRepository{Queries: mockQueries}
 
     t.Run("Gets products", func(t *testing.T) {
-		mockQueries.On("GetProducts", mock.Anything).Return([]Product{
-			{ID: 0, Name: "Product1", Description: pgtype.Text{String: "Description1", Valid: true}},
-			{ID: 1, Name: "Product2", Description: pgtype.Text{String: "Description2", Valid: true}},
+		productId1 := 0
+		productId2 := 1
+		productName1 := "Product 1"
+		productName2 := "Product 2"
+		categoryId1 := 10
+		categoryId2 := 11
+		categoryName1 := "category 1"
+		categoryName2 := "category 2"
+		description1 := "description 1"
+		description2 := "description 2"
+
+
+		mockQueries.On("GetProducts", mock.Anything).Return([]GetProductsRow{
+			{ID: int32(productId1), Name: productName1, CategoryID: int32(categoryId1), CategoryName: categoryName1, Description: pgtype.Text{String: description1, Valid: true}},
+			{ID: int32(productId2), Name: productName2, CategoryID: int32(categoryId2), CategoryName: categoryName2, Description: pgtype.Text{String: description2, Valid: true}},
 		}, nil).Once()
 
 		products, err := repo.GetProducts(context.Background())
@@ -56,8 +68,8 @@ func TestGetProducts(t *testing.T){
 		assert.NoError(t, err)
 		assert.Len(t, products, 2)
 
-        product1 := models.Product{Id: 0, Name: "Product1", Description: "Description1"}
-        product2 := models.Product{Id: 1, Name: "Product2", Description: "Description2"}
+        product1 := models.Product{Id: productId1, Name: productName1, Category: models.ProductCategory{Id: categoryId1, Name: categoryName1}, Description: description1}
+        product2 := models.Product{Id: productId2, Name: productName2, Category: models.ProductCategory{Id: categoryId2, Name: categoryName2}, Description: description2}
 
         assert.Equal(t, []models.Product{product1, product2}, products)
 		mockQueries.AssertExpectations(t)

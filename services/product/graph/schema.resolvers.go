@@ -13,9 +13,14 @@ import (
 
 // CreateProduct is the resolver for the createProduct field.
 func (r *mutationResolver) CreateProduct(ctx context.Context, input *model.ProductCreateDto) (*model.Product, error) {
-	product := &model.Product{Name: &input.Name, Category: &input.Category, Description: &input.Description}
-	r.products = append(r.products, product)
-	return product, nil
+	product := models.Product{Name: input.Name, Category: models.ProductCategory{Id: input.CategoryID}, Description: input.Description}
+
+	inserted, err := r.Repository.InsertProduct(ctx, product)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapProductToProductDto(inserted), nil
 }
 
 // CreateProductCategory is the resolver for the createProductCategory field.
