@@ -11,5 +11,5 @@ func mapProductCategoryToProductCategoryDto(pc models.ProductCategory) *model.Pr
 
 func mapProductToProductDto(p models.Product) * model.Product {
 	pc := mapProductCategoryToProductCategoryDto(p.Category)
-	return &model.Product{Name: &p.Name, Description: &p.Description, Category: pc}
+	return &model.Product{ID: p.Id, Name: &p.Name, Description: &p.Description, Category: pc}
 }
