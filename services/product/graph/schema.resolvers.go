@@ -50,6 +50,16 @@ func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) 
 	return dtos, nil
 }
 
+// Product is the resolver for the product field.
+func (r *queryResolver) Product(ctx context.Context, id int) (*model.Product, error) {
+	product, err := r.Repository.GetProductById(ctx, int32(id))
+	if err != nil {
+		return &model.Product{}, err
+	}
+
+	return mapProductToProductDto(product), nil
+}
+
 // ProductCategories is the resolver for the ProductCategories field.
 func (r *queryResolver) ProductCategories(ctx context.Context) ([]*model.ProductCategory, error) {
 	pcs, err := r.Repository.GetProductCategories(ctx)
