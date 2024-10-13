@@ -31,8 +31,8 @@ func (r *queryResolver) ProductCategories(ctx context.Context) ([]*model.Product
 
 	pcsPtr := make([]*model.ProductCategory, len(pcs))
 	for i, val := range pcs {
-		dto := model.ProductCategory{ID: val.Id, Name: val.Name}
-		pcsPtr[i] = &dto
+		dto := mapProductCategoryToProductCategoryDto(val)
+		pcsPtr[i] = dto
 	}
 
 	return pcsPtr, nil
