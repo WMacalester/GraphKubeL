@@ -1,8 +1,10 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -25,6 +27,21 @@ func NewInventoryRepository() *InventoryRepository{
     })
 
 	return &InventoryRepository{Db: rdb}
+}
+
+func (r *InventoryRepository) GetProductInventory(ctx context.Context, key string) (int, error){
+	val, err := r.Db.Get(ctx, key).Result();
+	if err != nil {
+		return 0, err
+	}
+
+	return strconv.Atoi(val)
+}
+
+func (r *InventoryRepository) SetProductInventory(ctx context.Context, key string, value int) (error){
+	val := strconv.Itoa(value);
+	
+	return r.Db.Set(ctx, key, val, 0).Err();
 }
 
 func buildAddress() (string, error) {
