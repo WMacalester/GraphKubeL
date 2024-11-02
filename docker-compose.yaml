@@ -1,6 +1,29 @@
 version: "3.8"
 
 services:
+  inventory_db:
+    image: redis:8.0-M02-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli", "ping"]
+      interval: 2s
+      retries: 5
+      start_period: 2s
+      timeout: 1s
+    volumes:
+      - inventory_db:/data
+
+  inventory_service:
+    image: inventory-service
+    env_file:
+      - ./inventory.env
+    ports:
+      - "8081:8080"
+    depends_on:
+      inventory_db:
+        condition: service_healthy
+
   product_db:
     image: postgres:15
     env_file:
@@ -9,7 +32,10 @@ services:
       - "5432:5432"
     healthcheck:
       test:
-        ["CMD-SHELL", "pg_isready -U $$PRODUCT_PG_USER -d $$PRODUCT_PG_DATABASE"]
+        [
+          "CMD-SHELL",
+          "pg_isready -U $$PRODUCT_PG_USER -d $$PRODUCT_PG_DATABASE",
+        ]
       interval: 2s
       retries: 5
       start_period: 2s
@@ -22,10 +48,11 @@ services:
       - ./product.env
     image: product-service
     ports:
-      - "8080:8080"
+      - "8083:8080"
     depends_on:
       product_db:
         condition: service_healthy
 
 volumes:
   product_db:
+  inventory_db:
