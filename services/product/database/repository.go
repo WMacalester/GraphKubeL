@@ -32,7 +32,7 @@ func CreateConnString() (string, error){
 	user := os.Getenv("PRODUCT_PG_USER")
 	password := os.Getenv("PRODUCT_PG_PASSWORD")
 	host := os.Getenv("PRODUCT_PG_HOST")
-	port := os.Getenv("PRODUCT_PG_PORT")
+	port := os.Getenv("PRODUCT_DB_PORT")
 	dbname := os.Getenv("PRODUCT_PG_DATABASE")
 	sslmode := os.Getenv("PRODUCT_PG_SSLMODE")
 

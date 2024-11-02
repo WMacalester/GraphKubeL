@@ -37,9 +37,9 @@ func main() {
 
 	appConfig := AppConfig{DB: *database.NewProductRepository(connPool)}
 	
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = defaultPort
+	exposedPort := os.Getenv("PRODUCT_SERVICE_PORT")
+	if exposedPort == "" {
+		exposedPort = defaultPort
 	}
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{Repository: &appConfig.DB}}))
@@ -47,6 +47,6 @@ func main() {
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", exposedPort)
+	log.Fatal(http.ListenAndServe(":"+defaultPort, nil))
 }
