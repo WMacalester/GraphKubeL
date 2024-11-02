@@ -3,14 +3,13 @@ version: "3.8"
 services:
   product_db:
     image: postgres:15
-    environment:
-      - POSTGRES_USER=postgres_user
-      - POSTGRES_PASSWORD=postgres_password
-      - POSTGRES_DB=product_db
+    env_file:
+      - ./product.env
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres_user -d product_db"]
+      test:
+        ["CMD-SHELL", "pg_isready -U $$PRODUCT_PG_USER -d $$PRODUCT_PG_DATABASE"]
       interval: 2s
       retries: 5
       start_period: 2s
@@ -20,7 +19,7 @@ services:
 
   product-service:
     env_file:
-      - product.env
+      - ./product.env
     image: product-service
     ports:
       - "8080:8080"
