@@ -2,16 +2,19 @@ import { ApolloServer } from "@apollo/server";
 import { ApolloGateway, IntrospectAndCompose } from "@apollo/gateway";
 import { startStandaloneServer } from "@apollo/server/standalone";
 
-const INV_SERVICE_PORT = process.env.INV_SERVICE_PORT;
-const PRODUCT_SERVICE_PORT = process.env.PRODUCT_SERVICE_PORT;
+const INV_HOST_NAME = process.env.INV_HOST_NAME;
+const PRODUCT_HOST_NAME = process.env.PRODUCT_HOST_NAME;
 
 const gateway = new ApolloGateway({
   supergraphSdl: new IntrospectAndCompose({
     subgraphs: [
-      { name: "inventory", url: `http://localhost:${INV_SERVICE_PORT}/query` },
+      {
+        name: "inventory",
+        url: `http://${INV_HOST_NAME}:8080/query`,
+      },
       {
         name: "product",
-        url: `http://localhost:${PRODUCT_SERVICE_PORT}/query`,
+        url: `http://${PRODUCT_HOST_NAME}:8080/query`,
       },
     ],
   }),

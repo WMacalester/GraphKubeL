@@ -77,6 +77,20 @@ services:
       product_db:
         condition: service_healthy
 
+  federated-graph:
+    image: federated-graph-service
+    environment:
+      - INV_HOST_NAME=${INV_HOST_NAME}
+      - PRODUCT_HOST_NAME=${PRODUCT_HOST_NAME}
+      - FEDERATED_GRAPH_SERVICE_PORT=${FEDERATED_GRAPH_SERVICE_PORT}
+    ports:
+      - "${FEDERATED_GRAPH_SERVICE_PORT}:4000"
+    depends_on:
+      inventory-service:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+
 volumes:
   product_db:
   inventory_db:
