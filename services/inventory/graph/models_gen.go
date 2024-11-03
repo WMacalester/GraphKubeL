@@ -10,6 +10,8 @@ type ProductInventory struct {
 	Value *int `json:"value,omitempty"`
 }
 
+func (ProductInventory) IsEntity() {}
+
 type Query struct {
 }
 

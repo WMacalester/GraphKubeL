@@ -6,7 +6,7 @@ type Mutation {
   setProductInventory(input: UpdateProductInventory): ProductInventory
 }
 
-type ProductInventory {
+type ProductInventory @key(fields: "id") {
   id: Int!
   value: Int
 }
