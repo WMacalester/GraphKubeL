@@ -10,6 +10,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /inventory-service
 
 FROM alpine:${ALPINE_VERSION}
 WORKDIR /root/
+RUN apk add --no-cache curl
 
 COPY --from=builder /inventory-service .
 EXPOSE 8080

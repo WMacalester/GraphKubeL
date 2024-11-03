@@ -16,7 +16,7 @@ services:
     volumes:
       - inventory_db:/data
 
-  inventory_service:
+  inventory-service:
     image: inventory-service
     env_file:
       - ./inventory.env
@@ -25,6 +25,16 @@ services:
       - INV_SERVICE_PORT=${INV_SERVICE_PORT}
     ports:
       - "${INV_SERVICE_PORT}:8080"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f -s http://inventory-service:8080/health",
+        ]
+      interval: 2s
+      retries: 2
+      start_period: 2s
+      timeout: 1s
     depends_on:
       inventory_db:
         condition: service_healthy

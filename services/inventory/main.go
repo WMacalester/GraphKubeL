@@ -36,7 +36,14 @@ func main() {
 
 	http.Handle("/", playground.Handler("Inventory GraphQL playground", "/query"))
 	http.Handle("/query", srv)
+	http.HandleFunc("/health", HealthCheck())
 
 	log.Printf("connect to http://localhost:%s/ for inventory GraphQL playground", exposedPort)
 	log.Fatal(http.ListenAndServe(":"+defaultPort, nil))
+}
+
+func HealthCheck()(http.HandlerFunc){
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
 }
