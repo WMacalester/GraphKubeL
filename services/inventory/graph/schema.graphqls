@@ -1,0 +1,17 @@
+type Query {
+  getProductInventory(id: Int!): ProductInventory
+}
+
+type Mutation {
+  setProductInventory(input: UpdateProductInventory): ProductInventory
+}
+
+type ProductInventory {
+  id: Int!
+  value: Int
+}
+
+input UpdateProductInventory {
+  id: Int!
+  value: Int
+}

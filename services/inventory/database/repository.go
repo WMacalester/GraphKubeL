@@ -38,10 +38,14 @@ func (r *InventoryRepository) GetProductInventory(ctx context.Context, key strin
 	return strconv.Atoi(val)
 }
 
-func (r *InventoryRepository) SetProductInventory(ctx context.Context, key string, value int) (error){
+func (r *InventoryRepository) SetProductInventory(ctx context.Context, key string, value int) (int, error){
 	val := strconv.Itoa(value);
-	
-	return r.Db.Set(ctx, key, val, 0).Err();
+
+	err := r.Db.Set(ctx, key, val, 0).Err();
+	if err != nil {
+		return 0, err
+	}
+	return value, nil
 }
 
 func buildAddress() (string, error) {
