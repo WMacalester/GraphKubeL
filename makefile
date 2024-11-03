@@ -1,16 +1,20 @@
 SERVICES_DIR = ./services
+FEDERATED_GRAPH_SERVICE_DIR = $(SERVICES_DIR)/federated-graph
 INVENTORY_SERVICE_DIR = $(SERVICES_DIR)/inventory
 ORDER_SERVICE_DIR = $(SERVICES_DIR)/order
 PRODUCT_SERVICE_DIR = $(SERVICES_DIR)/product
 TOOLS_DIR = ./internal/tools
 
-PRODUCT_SERVICE_NAME = product-service
+FEDERATED_GRAPH_SERVICE_NAME = federated-graph-service
 INVENTORY_SERVICE_NAME = inventory-service
+PRODUCT_SERVICE_NAME = product-service
 ORDER_SERVICE_NAME = order-service
 
-BASE_IMAGE = base-graphkubel-image
-PRODUCT_IMAGE = $(PRODUCT_SERVICE_NAME):latest
+BASE_BUILDER = base-graphkubel-builder
+BASE_PRODUCTION = base-graphkubel-production
+FEDERATED_GRAPH_IMAGE = $(FEDERATED_GRAPH_SERVICE_NAME):latest
 INVENTORY_IMAGE = $(INVENTORY_SERVICE_NAME):latest
+PRODUCT_IMAGE = $(PRODUCT_SERVICE_NAME):latest
 ORDER_IMAGE = $(ORDER_SERVICE_NAME):latest
 
 ALPINE_VERSION = 3.14
@@ -22,25 +26,38 @@ all: build
 
 # Build
 .PHONY: build
-build: build-product build-inventory build-order
+build: build-federated-graph build-product build-inventory build-order 
 
-.PHONY: build-base-image
-build-base-image:
-	@echo "Building Inventory Service..."
-	docker build -t $(BASE_IMAGE) -f Dockerfile.base .
+.PHONY: build-base-builder
+build-base-builder:
+	@echo "Building base builder image..."
+	docker build -t $(BASE_BUILDER) -f Dockerfile.builder .
+
+.PHONY: build-base-production
+build-base-production:
+	@echo "Building base production image..."
+	docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(BASE_PRODUCTION) -f Dockerfile.production .
+	
+.PHONY: build-base-images
+build-base-images: build-base-builder build-base-production
+
+.PHONY: build-federated-graph
+build-federated-graph: 
+	@echo "Building Federated-Graph Service..."
+	cd $(FEDERATED_GRAPH_SERVICE_DIR) && docker build -t $(FEDERATED_GRAPH_IMAGE) -f Dockerfile.federated-graph .
 
 .PHONY: build-inventory
-build-inventory: build-base-image
+build-inventory: build-base-images
 	@echo "Building Inventory Service..."
-	cd $(INVENTORY_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(INVENTORY_IMAGE) -f Dockerfile.inventory .
+	cd $(INVENTORY_SERVICE_DIR) && docker build  -t $(INVENTORY_IMAGE) -f Dockerfile.inventory .
 
 .PHONY: build-order
-build-order: build-base-image
+build-order: build-base-images
 	@echo "Building Order Service..."
 	cd $(ORDER_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(ORDER_IMAGE) -f Dockerfile.order .
 
 .PHONY: build-product
-build-product: build-base-image
+build-product: build-base-images
 	@echo "Building Product Service..."
 	cd $(PRODUCT_SERVICE_DIR) && go generate && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(PRODUCT_IMAGE) -f Dockerfile.product .
 

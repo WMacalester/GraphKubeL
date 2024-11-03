@@ -1,6 +1,6 @@
 ARG ARG ALPINE_VERSION 
 
-FROM base-graphkubel-image AS builder
+FROM base-graphkubel-builder AS builder
 
 COPY . ./services/order
 
@@ -8,8 +8,7 @@ WORKDIR /app/services/order
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /order-service
 
-FROM alpine:${ALPINE_VERSION}
-WORKDIR /root/
+FROM base-graphkubel-production
 
 COPY --from=builder /order-service .
 EXPOSE 8080

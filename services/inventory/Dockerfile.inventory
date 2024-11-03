@@ -1,6 +1,6 @@
 ARG ARG ALPINE_VERSION 
 
-FROM base-graphkubel-image AS builder
+FROM base-graphkubel-builder AS builder
 
 COPY . ./services/inventory
 
@@ -8,9 +8,7 @@ WORKDIR /app/services/inventory
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /inventory-service
 
-FROM alpine:${ALPINE_VERSION}
-WORKDIR /root/
-RUN apk add --no-cache curl
+FROM base-graphkubel-production
 
 COPY --from=builder /inventory-service .
 EXPOSE 8080
