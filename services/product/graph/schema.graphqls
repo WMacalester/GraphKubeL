@@ -9,7 +9,7 @@ type Mutation {
   createProductCategory(input: ProductCategoryCreateDto): ProductCategory
 }
 
-type Product {
+type Product @key(fields: id) {
   id: Int!
   name: String
   category: ProductCategory
