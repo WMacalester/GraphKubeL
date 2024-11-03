@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "compile": "tsc",
-    "start": "pnpm run compile && node ./dist/index.js"
+    "start": "pnpm run compile && node --env-file=../../.env ./dist/index.js "
   },
   "devDependencies": {
     "@types/node": "^22.8.7",
