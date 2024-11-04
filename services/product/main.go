@@ -12,6 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/WMacalester/GraphKubeL/internal/common"
 	"github.com/WMacalester/GraphKubeL/services/product/database"
 	"github.com/WMacalester/GraphKubeL/services/product/graph"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -46,14 +47,9 @@ func main() {
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
-	http.HandleFunc("/health", HealthCheck())
+	http.HandleFunc("/health", common.HealthCheck())
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", exposedPort)
 	log.Fatal(http.ListenAndServe(":"+defaultPort, nil))
 }
 
-func HealthCheck()(http.HandlerFunc){
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	}
-}
