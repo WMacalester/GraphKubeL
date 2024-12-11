@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/WMacalester/GraphKubeL/internal/common"
 	"github.com/WMacalester/GraphKubeL/services/product/models"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/stretchr/testify/assert"
@@ -15,34 +16,28 @@ type MockQueries struct {
     mock.Mock
 }
 
-func handleMockCall[T any](args mock.Arguments) (T, error){
-    var zero T
-	if args.Error(1) != nil {return zero, args.Error(1)}
-	return args.Get(0).(T), nil
-}
-
 func (m *MockQueries) GetProductById(ctx context.Context, id int32) (GetProductByIdRow, error) {
-	return handleMockCall[GetProductByIdRow](m.Called(ctx))
+	return common.HandleMockCall[GetProductByIdRow](m.Called(ctx))
 }
 
 func (m *MockQueries) GetProducts(ctx context.Context) ([]GetProductsRow, error) {
-	return handleMockCall[[]GetProductsRow](m.Called(ctx))
+	return common.HandleMockCall[[]GetProductsRow](m.Called(ctx))
 }   
 
 func (m *MockQueries) GetProductCategoryById(ctx context.Context, id int32) (ProductCategory, error) {
-    return handleMockCall[ProductCategory](m.Called(ctx))
+    return common.HandleMockCall[ProductCategory](m.Called(ctx))
 }   
 
 func (m *MockQueries) GetProductCategories(ctx context.Context) ([]ProductCategory, error) {
-    return handleMockCall[[]ProductCategory](m.Called(ctx))
+    return common.HandleMockCall[[]ProductCategory](m.Called(ctx))
 }   
 
 func (m *MockQueries) InsertProduct(ctx context.Context, productCreateDao InsertProductParams) (Product, error) {
-    return handleMockCall[Product](m.Called(ctx))
+    return common.HandleMockCall[Product](m.Called(ctx))
 }
 
 func (m *MockQueries) InsertProductCategory(ctx context.Context, name string) (ProductCategory, error) {
-    return handleMockCall[ProductCategory](m.Called(ctx))
+    return common.HandleMockCall[ProductCategory](m.Called(ctx))
 }
 
 func TestGetProducts(t *testing.T){
@@ -185,7 +180,7 @@ func TestInsertProduct(t *testing.T){
     t.Run("Inserted product returns product", func(t *testing.T) {
 		name :=  "some-product-name"
 		description :=  "some-description"
-        mockQueries.On("InsertProduct", mock.Anything).Return(Product{ID: 12, Name:name, Description: pgtype.Text{description, true}, CategoryID: pgtype.Int4{1, true}}, nil).Once()
+        mockQueries.On("InsertProduct", mock.Anything).Return(Product{ID: 12, Name:name, Description: pgtype.Text{String: description, Valid: true}, CategoryID: pgtype.Int4{Int32: 1, Valid: true}}, nil).Once()
         expected := models.Product{Id: 12, Name: name, Description: description}
 
         id, err := repo.InsertProduct(context.Background(), models.Product{Name: name, Description: description})
