@@ -2,9 +2,9 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"os"
 
+	"github.com/WMacalester/GraphKubeL/internal/common"
 	"github.com/WMacalester/GraphKubeL/services/product/models"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -36,14 +36,7 @@ func CreateConnString() (string, error){
 	dbname := os.Getenv("PRODUCT_PG_DATABASE")
 	sslmode := os.Getenv("PRODUCT_PG_SSLMODE")
 
-	if user == "" || password == "" || host == "" || port == "" || dbname == "" {
-		return "", fmt.Errorf("one or more required environment variables are missing")
-	}
-
-	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
-		user, password, host, port, dbname, sslmode)
-
-	return connString, nil
+	return common.FormatPostgresConnString(user, password, host, port, dbname, sslmode)
 }
 
 func (r *ProductRepository) GetProductById(ctx context.Context, id int32) (models.Product, error){
@@ -71,7 +64,7 @@ func (r *ProductRepository) GetProducts(ctx context.Context) ([]models.Product, 
 }
 
 func (r *ProductRepository) InsertProduct(ctx context.Context, product models.Product) (models.Product, error) {
-	dao := InsertProductParams{
+	 dao := InsertProductParams{
 		Name: product.Name,
 		CategoryID: pgtype.Int4{Int32: int32(product.Category.Id), Valid: true}, 
 		Description: pgtype.Text{String: product.Description, Valid: true},

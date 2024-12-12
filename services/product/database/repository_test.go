@@ -211,7 +211,7 @@ func TestCreateConnString(t *testing.T){
 		os.Setenv("PRODUCT_PG_USER", "testuser")
 		os.Setenv("PRODUCT_PG_PASSWORD", "testpassword")
 		os.Setenv("PRODUCT_PG_HOST", "localhost")
-		os.Setenv("PRODUCT_PG_PORT", "5432")
+		os.Setenv("PRODUCT_DB_PORT", "5432")
 		os.Setenv("PRODUCT_PG_DATABASE", "testdb")
 		os.Setenv("PRODUCT_PG_SSLMODE", "disable")
 	}
@@ -220,7 +220,7 @@ func TestCreateConnString(t *testing.T){
 		os.Unsetenv("PRODUCT_PG_USER")
 		os.Unsetenv("PRODUCT_PG_PASSWORD")
 		os.Unsetenv("PRODUCT_PG_HOST")
-		os.Unsetenv("PRODUCT_PG_PORT")
+		os.Unsetenv("PRODUCT_DB_PORT")
 		os.Unsetenv("PRODUCT_PG_DATABASE")
 		os.Unsetenv("PRODUCT_PG_SSLMODE")
 	}
