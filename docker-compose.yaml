@@ -44,7 +44,7 @@ services:
     env_file:
       - ./order.env
     ports:
-      - "${ORDER_DB_PORT}:5432"
+      - "5433:5432"
     healthcheck:
       test:
         [
@@ -82,7 +82,7 @@ services:
     env_file:
       - ./product.env
     ports:
-      - "${PRODUCT_DB_PORT}:5432"
+      - "5434:5432"
     healthcheck:
       test:
         [
