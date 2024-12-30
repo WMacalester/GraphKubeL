@@ -15,9 +15,8 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*Order, error) {
 		return nil, err
 	}
 
-
-	orderDtos := make([]*Order, len(orders))
-
+	orderDtos := make([]*Order, 0, len(orders)) 
+	
 	for _, order := range orders {
 		orderDto := mapOrderToDto(order)
 		orderDtos = append(orderDtos, &orderDto)
