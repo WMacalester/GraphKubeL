@@ -4,6 +4,7 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 
 const INV_HOST_NAME = process.env.INV_HOST_NAME;
 const PRODUCT_HOST_NAME = process.env.PRODUCT_HOST_NAME;
+const ORDER_HOST_NAME = process.env.ORDER_HOST_NAME;
 
 const gateway = new ApolloGateway({
   supergraphSdl: new IntrospectAndCompose({
@@ -11,6 +12,10 @@ const gateway = new ApolloGateway({
       {
         name: "inventory",
         url: `http://${INV_HOST_NAME}:8080/query`,
+      },
+      {
+        name: "order",
+        url: `http://${ORDER_HOST_NAME}:8080/query`,
       },
       {
         name: "product",
