@@ -208,20 +208,20 @@ func TestInsertProductCategory(t *testing.T){
 
 func TestCreateConnString(t *testing.T){
 	setEnv := func() {
-		os.Setenv("PRODUCT_PG_USER", "testuser")
-		os.Setenv("PRODUCT_PG_PASSWORD", "testpassword")
+		os.Setenv("PGUSER", "testuser")
+		os.Setenv("POSTGRES_PASSWORD", "testpassword")
 		os.Setenv("PRODUCT_PG_HOST", "localhost")
 		os.Setenv("PRODUCT_DB_PORT", "5432")
-		os.Setenv("PRODUCT_PG_DATABASE", "testdb")
+		os.Setenv("POSTGRES_DB", "testdb")
 		os.Setenv("PRODUCT_PG_SSLMODE", "disable")
 	}
 
 	unsetEnv := func() {
-		os.Unsetenv("PRODUCT_PG_USER")
-		os.Unsetenv("PRODUCT_PG_PASSWORD")
+		os.Unsetenv("PGUSER")
+		os.Unsetenv("POSTGRES_PASSWORD")
 		os.Unsetenv("PRODUCT_PG_HOST")
 		os.Unsetenv("PRODUCT_DB_PORT")
-		os.Unsetenv("PRODUCT_PG_DATABASE")
+		os.Unsetenv("POSTGRES_DB")
 		os.Unsetenv("PRODUCT_PG_SSLMODE")
 	}
 

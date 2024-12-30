@@ -29,11 +29,11 @@ func NewProductRepository(pool *pgxpool.Pool) *ProductRepository {
 }
 
 func CreateConnString() (string, error){
-	user := os.Getenv("PRODUCT_PG_USER")
-	password := os.Getenv("PRODUCT_PG_PASSWORD")
+	user := os.Getenv("PGUSER")
+	password := os.Getenv("POSTGRES_PASSWORD")
 	host := os.Getenv("PRODUCT_PG_HOST")
 	port := os.Getenv("PRODUCT_DB_PORT")
-	dbname := os.Getenv("PRODUCT_PG_DATABASE")
+	dbname := os.Getenv("POSTGRES_DB")
 	sslmode := os.Getenv("PRODUCT_PG_SSLMODE")
 
 	return common.FormatPostgresConnString(user, password, host, port, dbname, sslmode)
