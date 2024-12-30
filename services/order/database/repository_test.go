@@ -50,7 +50,7 @@ func TestGetOrders(t *testing.T) {
 
 func TestCreateConnString(t *testing.T){
 	setEnv := func() {
-		os.Setenv("POSTGRES_USER", "testuser")
+		os.Setenv("PGUSER", "testuser")
 		os.Setenv("POSTGRES_PASSWORD", "testpassword")
 		os.Setenv("ORDER_PG_HOST", "localhost")
 		os.Setenv("ORDER_DB_PORT", "5432")
@@ -59,7 +59,7 @@ func TestCreateConnString(t *testing.T){
 	}
 
 	unsetEnv := func() {
-		os.Unsetenv("POSTGRES_USER")
+		os.Unsetenv("PGUSER")
 		os.Unsetenv("POSTGRES_PASSWORD")
 		os.Unsetenv("ORDER_PG_HOST")
 		os.Unsetenv("ORDER_DB_PORT")

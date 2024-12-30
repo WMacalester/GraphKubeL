@@ -23,7 +23,7 @@ func NewOrderRepository(pool *pgxpool.Pool) *OrderRepository {
 }
 
 func CreateConnString() (string, error){
-	user := os.Getenv("POSTGRES_USER")
+	user := os.Getenv("PGUSER")
 	password := os.Getenv("POSTGRES_PASSWORD")
 	host := os.Getenv("ORDER_PG_HOST")
 	port := os.Getenv("ORDER_DB_PORT")
