@@ -39,6 +39,44 @@ services:
       inventory_db:
         condition: service_healthy
 
+  order_db:
+    image: postgres:15
+    env_file:
+      - ./order.env
+    ports:
+      - "${ORDER_DB_PORT}:5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $$PGUSER -d $$POSTGRES_DB",
+        ]
+      interval: 2s
+      retries: 5
+      start_period: 2s
+      timeout: 1s
+    volumes:
+      - order_db:/var/lib/postgresql/data
+
+  order-service:
+    env_file:
+      - ./order.env
+    environment:
+      - ORDER_DB_PORT=${ORDER_DB_PORT}
+      - ORDER_SERVICE_PORT=${ORDER_SERVICE_PORT}
+    image: order-service
+    ports:
+      - "${ORDER_SERVICE_PORT}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -s http://order-service:8080/health"]
+      interval: 2s
+      retries: 5
+      start_period: 2s
+      timeout: 1s
+    depends_on:
+      order_db:
+        condition: service_healthy
+
   product_db:
     image: postgres:15
     env_file:
@@ -92,5 +130,7 @@ services:
         condition: service_healthy
 
 volumes:
-  product_db:
   inventory_db:
+  order_db:
+  product_db:
+

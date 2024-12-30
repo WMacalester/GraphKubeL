@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/WMacalester/GraphKubeL/internal/common"
@@ -45,4 +46,44 @@ func TestGetOrders(t *testing.T) {
 		{Id: id1, TransactionID: transactionId1, ProductId: productId1, NumberOfItems: numberOfItems1},
 		{Id: id2, TransactionID: transactionId2, ProductId: productId2, NumberOfItems: numberOfItems2},
 	}, orders)
+}
+
+func TestCreateConnString(t *testing.T){
+	setEnv := func() {
+		os.Setenv("POSTGRES_USER", "testuser")
+		os.Setenv("POSTGRES_PASSWORD", "testpassword")
+		os.Setenv("ORDER_PG_HOST", "localhost")
+		os.Setenv("ORDER_DB_PORT", "5432")
+		os.Setenv("POSTGRES_DB", "testdb")
+		os.Setenv("ORDER_PG_SSLMODE", "disable")
+	}
+
+	unsetEnv := func() {
+		os.Unsetenv("POSTGRES_USER")
+		os.Unsetenv("POSTGRES_PASSWORD")
+		os.Unsetenv("ORDER_PG_HOST")
+		os.Unsetenv("ORDER_DB_PORT")
+		os.Unsetenv("POSTGRES_DB")
+		os.Unsetenv("ORDER_PG_SSLMODE")
+	}
+
+	t.Run("Should create expected conn string", func(t *testing.T) {
+        setEnv()
+		defer unsetEnv() 
+
+		expected := "postgres://testuser:testpassword@localhost:5432/testdb?sslmode=disable"
+
+		result, err := CreateConnString()
+        
+        assert.NoError(t, err)
+        assert.Equal(t, expected, result)
+	})
+
+	t.Run("Should return error ", func(t *testing.T) {
+		unsetEnv()
+
+		_, err := CreateConnString()
+        assert.Error(t, err)
+        
+    })
 }
