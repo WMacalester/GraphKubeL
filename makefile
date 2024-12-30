@@ -93,7 +93,7 @@ install-tools:
 
 .PHONY: migrate-db
 migrate-db:
-	@echo "Migrating product database..."
+	@echo -e "\033[1;35mMigrating order and product databases...\033[0m"
 	./migrateDb.sh
 
 # Default target
