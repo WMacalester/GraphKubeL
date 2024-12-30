@@ -1,6 +1,12 @@
 package common
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"github.com/jackc/pgx/v5/pgxpool"
+)
 
 func FormatPostgresConnString(user, password, host, port, dbname, sslmode string) (string, error) {
 	if user == "" || password == "" || host == "" || port == "" || dbname == "" || sslmode == "" {
@@ -11,4 +17,18 @@ func FormatPostgresConnString(user, password, host, port, dbname, sslmode string
 		user, password, host, port, dbname, sslmode)
 
 	return connString, nil
+}
+
+func ConnectToPostgresDb(ctx context.Context, createConnString func()(string, error)) (*pgxpool.Pool){
+	connString, err := createConnString()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	connPool, err := pgxpool.New(ctx, connString)
+	if err != nil {
+		log.Fatalf("unable to connect to database: %v", err)
+	}
+
+	return connPool
 }

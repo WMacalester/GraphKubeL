@@ -15,7 +15,6 @@ import (
 	"github.com/WMacalester/GraphKubeL/internal/common"
 	"github.com/WMacalester/GraphKubeL/services/product/database"
 	"github.com/WMacalester/GraphKubeL/services/product/graph"
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const defaultPort = "8080"
@@ -25,15 +24,7 @@ type AppConfig struct {
 }
 
 func main() {
-	connString, err := database.CreateConnString()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	connPool, err := pgxpool.New(context.Background(), connString)
-	if err != nil {
-		log.Fatalf("unable to connect to database: %v", err)
-	}
+	connPool := common.ConnectToPostgresDb(context.Background(), database.CreateConnString)
 	defer connPool.Close()
 
 	appConfig := AppConfig{DB: *database.NewProductRepository(connPool)}
