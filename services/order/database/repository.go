@@ -11,6 +11,7 @@ import (
 
 type OrderQueries interface {
 	GetOrders(ctx context.Context) ([]Order, error)
+	InsertOrder(ctx context.Context, orderDao InsertOrderParams) (Order, error)
 }
 
 type OrderRepository struct {
@@ -47,6 +48,19 @@ func (r *OrderRepository) GetOrders(ctx context.Context) ([]models.Order, error)
 	return orders, nil
 }
 
+func (r *OrderRepository) InsertOrder(ctx context.Context, newOrder models.Order)(models.Order, error){
+	insertOrderParamsDao := mapOrderToInsertOrderParamsDao(newOrder) 
+	savedOrder, err := r.Queries.InsertOrder(ctx, insertOrderParamsDao)
+	if err != nil {
+		return models.Order{}, nil
+	}
+	return mapOrderDaoToOrder(savedOrder), nil
+}
+
 func mapOrderDaoToOrder(dao Order) models.Order {
 	return models.Order{TransactionID: int(dao.TransactionID), ProductId: int(dao.ProductID), NumberOfItems: int(dao.NumberOfItems)}
+}
+
+func mapOrderToInsertOrderParamsDao(model models.Order) InsertOrderParams {
+	return InsertOrderParams{TransactionID: int32(model.TransactionID), ProductID: int32(model.ProductId), NumberOfItems: int32(model.NumberOfItems)}
 }

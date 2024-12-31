@@ -19,12 +19,14 @@ func (m *MockQueries) GetOrders(ctx context.Context) ([]Order, error){
 	return common.HandleMockCall[[]Order](m.Called(ctx))
 }
 
+func (m *MockQueries) InsertOrder(ctx context.Context, orderDao InsertOrderParams) (Order, error){
+	return common.HandleMockCall[Order](m.Called(ctx))
+}
+
 func TestGetOrders(t *testing.T) {
 	mockQueries := new(MockQueries)
 	repo := &OrderRepository{Queries: mockQueries}
 
-	id1 := 1
-	id2 := 2
 	transactionId1 := 3
 	transactionId2 := 4
 	productId1 := 5
@@ -43,9 +45,26 @@ func TestGetOrders(t *testing.T) {
 	assert.Len(t, orders, 2)
 
 	assert.Equal(t, []models.Order{
-		{Id: id1, TransactionID: transactionId1, ProductId: productId1, NumberOfItems: numberOfItems1},
-		{Id: id2, TransactionID: transactionId2, ProductId: productId2, NumberOfItems: numberOfItems2},
+		{TransactionID: transactionId1, ProductId: productId1, NumberOfItems: numberOfItems1},
+		{TransactionID: transactionId2, ProductId: productId2, NumberOfItems: numberOfItems2},
 	}, orders)
+}
+
+func TestInsertOrder(t *testing.T) {
+	mockQueries := new(MockQueries)
+	repo := &OrderRepository{Queries: mockQueries}
+
+	transactionId := 3
+	productId := 5
+	numberOfItems := 10
+	order := models.Order{TransactionID: transactionId, ProductId: productId, NumberOfItems: numberOfItems}
+
+	mockQueries.On("InsertOrder", mock.Anything).Return(Order{TransactionID: int32(transactionId), ProductID: int32(productId), NumberOfItems: int32(numberOfItems)}, nil).Once()
+
+	result, err := repo.InsertOrder(context.Background(), order)
+
+	assert.NoError(t, err)
+	assert.Equal(t, order, result)
 }
 
 func TestCreateConnString(t *testing.T){

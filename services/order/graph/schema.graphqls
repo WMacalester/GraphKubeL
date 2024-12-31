@@ -2,7 +2,17 @@ type Query {
   orders: [Order]
 }
 
+type Mutation {
+  createOrder(input: OrderCreateDto): Order
+}
+
 type Order @key(fields: "transactionId productId") {
+  transactionId: Int!
+  productId: Int!
+  numberOfItems: Int!
+}
+
+input OrderCreateDto {
   transactionId: Int!
   productId: Int!
   numberOfItems: Int!
