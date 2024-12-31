@@ -25,5 +25,6 @@ go.work.sum
 .env
 
 #gqlgen generated files
-*/**/generated.go
-*/**/model/models_gen.go
+**/generated.go
+**/model/models_gen.go
+**/federation.go
