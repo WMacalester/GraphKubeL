@@ -3,10 +3,9 @@
 package graph
 
 type Order struct {
-	ID            int  `json:"id"`
-	TransactionID *int `json:"transactionId,omitempty"`
-	ProductID     *int `json:"productId,omitempty"`
-	NumberOfItems *int `json:"numberOfItems,omitempty"`
+	TransactionID int `json:"transactionId"`
+	ProductID     int `json:"productId"`
+	NumberOfItems int `json:"numberOfItems"`
 }
 
 func (Order) IsEntity() {}

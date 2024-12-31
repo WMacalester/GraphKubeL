@@ -33,8 +33,8 @@ func TestGetOrders(t *testing.T) {
 	numberOfItems2 := 200
 
 	mockQueries.On("GetOrders", mock.Anything).Return([]Order{
-		{ID: int32(id1), TransactionID: int32(transactionId1), ProductID: int32(productId1), NumberOfItems: int32(numberOfItems1)},
-		{ID: int32(id2), TransactionID: int32(transactionId2), ProductID: int32(productId2), NumberOfItems: int32(numberOfItems2)},
+		{TransactionID: int32(transactionId1), ProductID: int32(productId1), NumberOfItems: int32(numberOfItems1)},
+		{TransactionID: int32(transactionId2), ProductID: int32(productId2), NumberOfItems: int32(numberOfItems2)},
 	}, nil).Once()
 
 	orders, err := repo.GetOrders(context.Background())

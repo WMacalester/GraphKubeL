@@ -9,9 +9,9 @@ import (
 	"fmt"
 )
 
-// FindOrderByID is the resolver for the findOrderByID field.
-func (r *entityResolver) FindOrderByID(ctx context.Context, id int) (*Order, error) {
-	panic(fmt.Errorf("not implemented: FindOrderByID - findOrderByID"))
+// FindOrderByTransactionIDAndProductID is the resolver for the findOrderByTransactionIDAndProductID field.
+func (r *entityResolver) FindOrderByTransactionIDAndProductID(ctx context.Context, transactionID int, productID int) (*Order, error) {
+	panic(fmt.Errorf("not implemented: FindOrderByTransactionIDAndProductID - findOrderByTransactionIDAndProductID"))
 }
 
 // Entity returns EntityResolver implementation.

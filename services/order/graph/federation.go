@@ -160,12 +160,16 @@ func (ec *executionContext) resolveEntity(
 		}
 		switch resolverName {
 
-		case "findOrderByID":
-			id0, err := ec.unmarshalNInt2int(ctx, rep["id"])
+		case "findOrderByTransactionIDAndProductID":
+			id0, err := ec.unmarshalNInt2int(ctx, rep["transactionId"])
 			if err != nil {
-				return nil, fmt.Errorf(`unmarshalling param 0 for findOrderByID(): %w`, err)
+				return nil, fmt.Errorf(`unmarshalling param 0 for findOrderByTransactionIDAndProductID(): %w`, err)
 			}
-			entity, err := ec.resolvers.Entity().FindOrderByID(ctx, id0)
+			id1, err := ec.unmarshalNInt2int(ctx, rep["productId"])
+			if err != nil {
+				return nil, fmt.Errorf(`unmarshalling param 1 for findOrderByTransactionIDAndProductID(): %w`, err)
+			}
+			entity, err := ec.resolvers.Entity().FindOrderByTransactionIDAndProductID(ctx, id0, id1)
 			if err != nil {
 				return nil, fmt.Errorf(`resolving Entity "Order": %w`, err)
 			}
@@ -210,7 +214,15 @@ func entityResolverNameForOrder(ctx context.Context, rep EntityRepresentation) (
 		// we shouldn't use use it
 		allNull := true
 		m = rep
-		val, ok = m["id"]
+		val, ok = m["transactionId"]
+		if !ok {
+			break
+		}
+		if allNull {
+			allNull = val == nil
+		}
+		m = rep
+		val, ok = m["productId"]
 		if !ok {
 			break
 		}
@@ -220,7 +232,7 @@ func entityResolverNameForOrder(ctx context.Context, rep EntityRepresentation) (
 		if allNull {
 			break
 		}
-		return "findOrderByID", nil
+		return "findOrderByTransactionIDAndProductID", nil
 	}
 	return "", fmt.Errorf("%w for Order", ErrTypeNotFound)
 }

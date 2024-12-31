@@ -5,5 +5,5 @@ import (
 )
 
 func mapOrderToDto(order models.Order) Order {
-	return Order{ID: order.Id, TransactionID: &order.TransactionID, ProductID: &order.ProductId, NumberOfItems: &order.NumberOfItems}
+	return Order{TransactionID: order.TransactionID, ProductID: order.ProductId, NumberOfItems: order.NumberOfItems}
 }

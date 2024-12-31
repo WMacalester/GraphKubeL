@@ -48,5 +48,5 @@ func (r *OrderRepository) GetOrders(ctx context.Context) ([]models.Order, error)
 }
 
 func mapOrderDaoToOrder(dao Order) models.Order {
-	return models.Order{Id: int(dao.ID), TransactionID: int(dao.TransactionID), ProductId: int(dao.ProductID), NumberOfItems: int(dao.NumberOfItems)}
+	return models.Order{TransactionID: int(dao.TransactionID), ProductId: int(dao.ProductID), NumberOfItems: int(dao.NumberOfItems)}
 }
