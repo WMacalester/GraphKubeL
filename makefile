@@ -49,12 +49,12 @@ build-federated-graph:
 .PHONY: build-inventory
 build-inventory: build-base-images
 	@echo "Building Inventory Service..."
-	cd $(INVENTORY_SERVICE_DIR) && docker build  -t $(INVENTORY_IMAGE) -f Dockerfile.inventory .
+	cd $(INVENTORY_SERVICE_DIR) && go generate && docker build  -t $(INVENTORY_IMAGE) -f Dockerfile.inventory .
 
 .PHONY: build-order
 build-order: build-base-images
 	@echo "Building Order Service..."
-	cd $(ORDER_SERVICE_DIR) && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(ORDER_IMAGE) -f Dockerfile.order .
+	cd $(ORDER_SERVICE_DIR) && go generate && docker build --build-arg ALPINE_VERSION=$(ALPINE_VERSION) -t $(ORDER_IMAGE) -f Dockerfile.order .
 
 .PHONY: build-product
 build-product: build-base-images
